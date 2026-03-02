@@ -193,66 +193,6 @@ batuta apk list --system --filter android
 
 ---
 
-## Flutter Instrumentation
-
-The `batuta flutter` commands automate Flutter app instrumentation using [reFlutter](https://github.com/Impact-I/reFlutter) for Dart code dumping.
-
-### Requirements
-
-- **reflutter** installed: `pip install reflutter`
-- **Rooted Android device** for Dart code dumping
-- **Flutter APK** (will validate unless `--force` is used)
-
-### Workflow
-
-The `batuta flutter patch` command performs:
-
-1. Pull APK from device (or use local APK)
-2. Auto-merge if split APK detected
-3. Validate Flutter framework (unless `--force`)
-4. Patch with reflutter
-5. Sign with debug keystore
-6. Uninstall original app
-7. Install patched app
-8. Auto-start app (or wait with `--wait`)
-9. Dump Dart code to `<package>_dump.dart`
-10. Format as JSON if valid
-
-### Examples
-
-```bash
-# Full workflow: patch installed app and dump code
-batuta flutter patch com.example.flutter.app
-
-# Patch local APK file
-batuta flutter patch app.apk --output ./analysis
-
-# Skip auto-dump (install only)
-batuta flutter patch com.example.app --skip-dump
-
-# Wait for manual app start instead of auto-launch
-batuta flutter patch com.example.app --wait
-
-# Force patching (skip Flutter validation)
-batuta flutter patch com.example.app --force
-
-# Dump Dart code from already-patched app
-batuta flutter dump com.example.flutter.app
-
-# Dump to specific location
-batuta flutter dump com.example.app --output dump.dart
-```
-
-### Output Files
-
-After running `batuta flutter patch com.example.app`:
-
-- `com.example.app-reflutter-signed.apk` — Patched and signed APK
-- `com.example.app_dump.dart` — Raw Dart code dump
-- `com.example.app_dump.json` — Formatted JSON (if valid)
-
----
-
 ## Library Usage
 
 The core logic is importable independently of the CLI:
@@ -260,18 +200,15 @@ The core logic is importable independently of the CLI:
 ```python
 from batuta.core.adb import ADBWrapper
 
-# List devices
 adb = ADBWrapper()
 devices = adb.list_devices()
 for device in devices:
     print(f"{device.id}: {device.model} ({device.state})")
 
-# Search packages
 packages = adb.search_packages("google")
 for pkg in packages:
     print(f"{pkg.package_name} v{pkg.version_name}")
 
-# Pull an APK
 result = adb.pull_apk("com.example.app", output_dir=Path("./apks"))
 print(f"Pulled to: {result.local_path}")
 ```
@@ -303,7 +240,7 @@ Key architectural constraints:
 # Install with dev dependencies
 uv sync --group dev
 
-# Lint
+# Check Lint
 ruff check src/batuta/
 
 # Auto-fix lint issues
