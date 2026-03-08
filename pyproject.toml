@@ -25,6 +25,11 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.10",
 ]
+test = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "pytest-mock>=3.12",
+]
 
 [tool.hatch.build.targets.sdist]
 include = ["src/batuta"]
