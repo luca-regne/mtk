@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, computed_field
 
-from batuta.models.apk import AppMetadata
+from mtk.models.apk import AppMetadata
 
 
 class IntentFilter(BaseModel):

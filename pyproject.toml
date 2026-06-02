@@ -1,7 +1,7 @@
 [project]
-name = "batuta"
+name = "mobile-toolkit"
 version = "2.0.0"
-description = "Orchestrate Android reverse engineering tools into a unified security analysis pipeline"
+description = "A multi-platform mobile pentesting toolkit (Android today; iOS/IPA and device management on the roadmap)"
 authors = [{ name = "regne", email = "luca@regne.me" }]
 requires-python = ">=3.14"
 readme = "README.md"
@@ -23,7 +23,9 @@ dependencies = [
 ]
 
 [project.scripts]
-batuta = "batuta.cli.main:app"
+mtk = "mtk.cli.main:app"
+# Deprecated alias for users migrating from the old "batuta" name. Remove in the next major.
+batuta = "mtk.cli.main:app"
 
 [dependency-groups]
 dev = [
@@ -32,13 +34,13 @@ dev = [
 ]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/batuta"]
+include = ["src/mtk"]
 
 [tool.hatch.build.targets.wheel]
-include = ["src/batuta"]
+include = ["src/mtk"]
 
 [tool.hatch.build.targets.wheel.sources]
-"src/batuta" = "batuta"
+"src/mtk" = "mtk"
 
 [tool.uv]
 package = true  
@@ -56,7 +58,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.ruff.lint.per-file-ignores]
 # B008: typer uses function calls in defaults by design
-"src/batuta/cli/*.py" = ["B008"]
+"src/mtk/cli/*.py" = ["B008"]
 
 [tool.mypy]
 python_version = "3.14"

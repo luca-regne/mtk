@@ -1,13 +1,16 @@
-"""Root CLI application for batuta."""
+"""Root CLI application for mtk."""
 
 import typer
 
-from batuta import __version__
-from batuta.cli import analyze, apk, device
+from mtk import __version__
+from mtk.cli import analyze, apk, device
 
 app = typer.Typer(
-    name="batuta",
-    help="Orchestrate Android reverse engineering tools into a unified pipeline.",
+    name="mtk",
+    help=(
+        "mtk - a multi-platform mobile pentesting toolkit "
+        "(Android available now; iOS/IPA and device management on the roadmap)."
+    ),
     no_args_is_help=True,
 )
 
@@ -20,7 +23,7 @@ app.add_typer(apk.app, name="apk", help="Pull and manage APK files")
 def version_callback(value: bool) -> None:
     """Print version and exit."""
     if value:
-        typer.echo(f"batuta {__version__}")
+        typer.echo(f"mtk {__version__}")
         raise typer.Exit()
 
 
@@ -35,7 +38,7 @@ def main(
         help="Show version and exit.",
     ),
 ) -> None:
-    """batuta - Android security analysis pipeline."""
+    """mtk - a multi-platform mobile pentesting toolkit."""
     pass
 
 

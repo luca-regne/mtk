@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+`mtk` (mobile toolkit) is a multi-platform mobile pentesting toolkit. **Today it is Android/APK only** — iOS/IPA analysis and broader device management are roadmap items, and there is currently no iOS code. The package was previously named `batuta`; a deprecated `batuta` console-script alias is kept for one release.
+
 ## Commands
 
 ```bash
@@ -9,36 +11,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 uv sync --group dev
 
 # Lint
-ruff check src/batuta/
+ruff check src/mtk/
 
 # Auto-fix lint issues
-ruff check src/batuta/ --fix
+ruff check src/mtk/ --fix
 
 # Type check (strict mode)
-mypy src/batuta/
+mypy src/mtk/
 
 # Run the CLI
-uv run batuta --help
+uv run mtk --help
 ```
 
 There are no automated tests. Validate changes by running the CLI directly.
 
 ## CLI Structure
 
-Three top-level command groups:
+Three top-level command groups (Android only today; the layout is expected to evolve as iOS support is added — keep new Android work under the existing `apk`/`analyze`/`device` groups):
 
-| Group            | Commands                                                        | Purpose                             |
-| ---------------- | --------------------------------------------------------------- | ----------------------------------- |
-| `batuta apk`     | `list`, `search`, `info`, `pull`, `merge`, `decompile`, `patch` | Device/APK management               |
-| `batuta analyze` | `manifest`, `framework`                                         | Static analysis without decompiling |
-| `batuta device`  | (device management)                                             | ADB device operations               |
+| Group         | Commands                                                        | Purpose                             |
+| ------------- | --------------------------------------------------------------- | ----------------------------------- |
+| `mtk apk`     | `list`, `search`, `info`, `pull`, `merge`, `decompile`, `patch` | Device/APK management               |
+| `mtk analyze` | `manifest`, `framework`                                         | Static analysis without decompiling |
+| `mtk device`  | (device management)                                             | ADB device operations               |
 
 All commands accept `--json` / `-j` for machine-readable output. When `--json` is active, `console.*` output is suppressed — only `typer.echo(json.dumps(...))` goes to stdout.
 
 ## Architecture
 
 ```
-src/batuta/
+src/mtk/
 ├── cli/          # Typer commands — argument parsing and rich output only
 ├── core/         # Business logic — importable as a library
 ├── models/       # Pydantic v2 data models
@@ -59,9 +61,9 @@ Use `utils/output.py`'s global `console` singleton for all terminal output. Call
 
 ### Exception Hierarchy
 
-All exceptions inherit from `BatutaError`. Use typed subclasses (`ToolNotFoundError`, `ADBError`, `ProcessError`, etc.) rather than bare exceptions. `ProcessError` is raised automatically by `run_tool()` on non-zero exit.
+All exceptions inherit from `MTKError`. Use typed subclasses (`ToolNotFoundError`, `ADBError`, `ProcessError`, etc.) rather than bare exceptions. `ProcessError` is raised automatically by `run_tool()` on non-zero exit.
 
-CLI commands catch `BatutaError`, print via `console.print_error()`, and `raise typer.Exit(1) from None`.
+CLI commands catch `MTKError`, print via `console.print_error()`, and `raise typer.Exit(1) from None`.
 
 ### External Tool Resolution
 
@@ -69,9 +71,9 @@ CLI commands catch `BatutaError`, print via `console.print_error()`, and `raise 
 - Call `require("tool")` at the top of any CLI command that needs an external tool.
 - For special cases, such as `APKEditor` jar file, use a special resolution logic:
   1. `APKEDITOR_JAR` env var
-  2. `~/.batuta/config.json`
+  2. `~/.mtk/config.json` (falls back to the legacy `~/.batuta/config.json` if present)
   3. `APKEditor` wrapper on `PATH`.
 
 ### Ruff Config Notes
 
-`B008` (function calls in defaults) is suppressed for `src/batuta/cli/*.py` because Typer uses this pattern by design.
+`B008` (function calls in defaults) is suppressed for `src/mtk/cli/*.py` because Typer uses this pattern by design.

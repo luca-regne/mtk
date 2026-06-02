@@ -4,16 +4,16 @@ import contextlib
 import shutil
 from pathlib import Path
 
-from batuta.exceptions import (
+from mtk.exceptions import (
     APKPermissionError,
     APKPullError,
     DeviceNotFoundError,
     MultiplePackagesFoundError,
     PackageNotFoundError,
 )
-from batuta.models.apk import PackageInfo, PulledAPK
-from batuta.models.device import Device, DeviceList, DeviceState
-from batuta.utils.process import run_tool
+from mtk.models.apk import PackageInfo, PulledAPK
+from mtk.models.device import Device, DeviceList, DeviceState
+from mtk.utils.process import run_tool
 
 
 def _is_permission_error(exc: BaseException) -> bool:

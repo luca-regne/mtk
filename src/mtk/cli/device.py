@@ -6,10 +6,10 @@ import subprocess
 import typer
 from rich.table import Table
 
-from batuta.core.adb import ADBWrapper
-from batuta.exceptions import BatutaError
-from batuta.utils.deps import require
-from batuta.utils.output import console
+from mtk.core.adb import ADBWrapper
+from mtk.exceptions import MTKError
+from mtk.utils.deps import require
+from mtk.utils.output import console
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -76,7 +76,7 @@ def list_devices(
         console.print(table)
         console.print_info(f"{len(devices.available)} device(s) available")
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -108,6 +108,6 @@ def shell(
         # Run interactively
         subprocess.run(cmd, check=False)
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None

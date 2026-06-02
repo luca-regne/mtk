@@ -2,11 +2,11 @@
 
 from pathlib import Path
 
-from batuta.exceptions import DecompileError
-from batuta.models.apk import DecompileResult
-from batuta.utils.apk import validate_apk_path
-from batuta.utils.deps import require
-from batuta.utils.process import run_tool
+from mtk.exceptions import DecompileError
+from mtk.models.apk import DecompileResult
+from mtk.utils.apk import validate_apk_path
+from mtk.utils.deps import require
+from mtk.utils.process import run_tool
 
 
 class APKDecompiler:

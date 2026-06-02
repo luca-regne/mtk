@@ -3,7 +3,7 @@
 import subprocess
 from dataclasses import dataclass
 
-from batuta.exceptions import ProcessError
+from mtk.exceptions import ProcessError
 
 
 @dataclass

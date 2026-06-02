@@ -7,11 +7,11 @@ from pathlib import Path
 import typer
 from rich.table import Table
 
-from batuta.core.analyzer import FrameworkDetector
-from batuta.core.manifest import ManifestParser, get_sdk_label
-from batuta.exceptions import BatutaError
-from batuta.models.manifest import ComponentInfo, ProviderInfo
-from batuta.utils.output import console
+from mtk.core.analyzer import FrameworkDetector
+from mtk.core.manifest import ManifestParser, get_sdk_label
+from mtk.exceptions import MTKError
+from mtk.models.manifest import ComponentInfo, ProviderInfo
+from mtk.utils.output import console
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -86,7 +86,7 @@ def detect_framework(
 
         console.print()
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -296,7 +296,7 @@ def analyze_manifest(
 
         console.print()
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 

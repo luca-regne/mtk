@@ -6,8 +6,8 @@ from pathlib import Path
 from lxml import etree  # type: ignore[import-untyped]
 from pyaxmlparser import APK  # type: ignore[import-untyped]
 
-from batuta.exceptions import ManifestParseError
-from batuta.models.manifest import (
+from mtk.exceptions import ManifestParseError
+from mtk.models.manifest import (
     ActivityInfo,
     AttackSurface,
     IntentFilter,

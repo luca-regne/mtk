@@ -3,9 +3,9 @@
 from pathlib import Path
 from zipfile import BadZipFile, ZipFile
 
-from batuta.exceptions import AnalysisError
-from batuta.models.analyze import FrameworkMatch, FrameworkResult
-from batuta.utils.apk import validate_apk_path
+from mtk.exceptions import AnalysisError
+from mtk.models.analyze import FrameworkMatch, FrameworkResult
+from mtk.utils.apk import validate_apk_path
 
 
 class FrameworkDetector:

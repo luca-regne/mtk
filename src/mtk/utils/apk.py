@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from batuta.exceptions import BatutaError
+from mtk.exceptions import MTKError
 
 # ZIP file magic header (APKs are ZIP files)
 ZIP_FILE_HEADER = b"PK\x03\x04"
@@ -12,7 +12,7 @@ def validate_apk_path(
     apk_path: Path,
     *,
     require_zip_header: bool = False,
-    error_cls: type[BatutaError] = BatutaError,
+    error_cls: type[MTKError] = MTKError,
 ) -> None:
     """Validate that an APK file path is valid.
 
@@ -28,7 +28,7 @@ def validate_apk_path(
         error_cls: Exception class to raise on validation failure.
 
     Raises:
-        BatutaError (or subclass): If validation fails.
+        MTKError (or subclass): If validation fails.
     """
     if not apk_path.exists():
         raise error_cls(f"APK not found: {apk_path}")

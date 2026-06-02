@@ -41,8 +41,8 @@ git pull origin main
 # Run validation
 echo "Running pre-release validation..."
 uv sync --group dev
-uv run ruff check src/batuta/
-uv run mypy src/batuta/
+uv run ruff check src/mtk/
+uv run mypy src/mtk/
 
 # Bump version
 echo "Bumping version ($BUMP_TYPE)..."
@@ -75,4 +75,4 @@ git push origin "v$NEW_VERSION"
 
 echo ""
 echo "Release v$NEW_VERSION initiated successfully!"
-echo "Monitor CI/CD: https://github.com/luca-regne/batuta/actions"
+echo "Monitor CI/CD: https://github.com/luca-regne/mtk/actions"

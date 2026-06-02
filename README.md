@@ -1,49 +1,60 @@
-# batuta
+# mtk
 
-> Batuta is a Brazilian Portuguese word that means "baton" in English. Like a conductor's baton that directs an orchestra, **batuta** aims to be the main tool to orchestrates Android reverse engineering.
+> **mtk — mobile toolkit.** One CLI to pull apart, inspect, and tamper with mobile apps. Android today; iOS and device management on the way.
 
-`batuta` is a Python CLI for static Android application analysis — designed for penetration testers, bug bounty hunters, and malware analysts. It wraps battle-tested RE tools (`apktool`, `jadx`, `adb`, `APKEditor`) behind a clean, composable interface.
+`mtk` is a Python CLI and library for mobile application security work — designed for penetration testers, bug bounty hunters, and malware analysts. It wraps battle-tested tooling behind a clean, composable, scriptable interface so you can move between pulling, decompiling, analyzing, and patching without juggling a dozen commands.
+
+Today `mtk` ships full Android/APK support. iOS/IPA analysis and broader device management are actively planned — see [Roadmap](#roadmap--planned).
 
 ---
 
-## Features
+## Platform Support
+
+| Platform               | Status                                            |
+| ---------------------- | ------------------------------------------------- |
+| **Android (APK)**      | ✅ Available — pull, merge, decompile, analyze, patch |
+| **iOS (IPA)**          | 🚧 Planned (roadmap)                              |
+| **Device management**  | 🟡 Partial — Android via `adb` today; iOS planned |
+
+> `mtk` was previously named **`batuta`**. The `batuta` command still works as a deprecated alias and will be removed in the next major release. The config directory moved from `~/.batuta` to `~/.mtk` (the old location is read as a fallback).
+
+---
+
+## Available Now — Android
+
+### Features
 
 - **APK pulling** — pull APKs by package name, app name, or filter pattern
-- **Split APK support** — automatically detects split packages, pulls every part, and merges them via `batuta apk merge` or `--auto-merge`
-- **Decompilation** — run `jadx` and/or `apktool` via `batuta apk decompile` or `batuta apk pull --decompile`
-- **APK patching** — rebuild, align, sign, and optionally install via `batuta apk patch`
-- **Framework detection** — detect cross-platform frameworks (Flutter, React Native, Xamarin, Cordova, Unity) via `batuta analyze framework`
+- **Split APK support** — automatically detects split packages, pulls every part, and merges them via `mtk apk merge` or `--auto-merge`
+- **Decompilation** — run `jadx` and/or `apktool` via `mtk apk decompile` or `mtk apk pull --decompile`
+- **APK patching** — rebuild, align, sign, and optionally install via `mtk apk patch`
+- **Framework detection** — detect cross-platform frameworks (Flutter, React Native, Xamarin, Cordova, Unity) via `mtk analyze framework`
+- **Manifest analysis** — inspect components, permissions, and attack surface via `mtk analyze manifest`
 - **Interactive selection** — choose from multiple matches when searching (prompted automatically)
 - **Scriptable by design** — every command supports `--json` output for piping into `jq`, `grep`, or custom tooling
 - **Library-first architecture** — core logic is importable independently of the CLI
 
----
+### Requirements
 
-## Requirements
+**Python** >= 3.14
 
-### Python
-
-- Python >= 3.14
-
-### External Tools
-
-These must be installed and available on your `PATH`:
+**External tools** — these must be installed and available on your `PATH`:
 
 | Tool        | Purpose                                     | Install                                                                                   |
 | ----------- | ------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `adb`       | Android Debug Bridge — device communication | [Android SDK Platform Tools](https://developer.android.com/tools/releases/platform-tools) |
-| `apktool`   | APK decoding, smali disassembly             | [Apktool Webiste](https://apktool.org/)                                                   |
+| `apktool`   | APK decoding, smali disassembly             | [Apktool Website](https://apktool.org/)                                                   |
 | `jadx`      | Java/Kotlin decompilation                   | [Jadx GitHub Repository](https://github.com/skylot/jadx)                                  |
 | `APKEditor` | Split APK merging                           | [APKEditor Repository](https://github.com/REAndroid/APKEditor)                            |
 
-`batuta` checks for required tools at command entry and reports clear installation instructions when missing.
+`mtk` checks for required tools at command entry and reports clear installation instructions when missing.
 
 ### Configuring APKEditor
 
-`APKEditor` ships as a JAR file. Batuta resolves it in this order:
+`APKEditor` ships as a JAR file. `mtk` resolves it in this order:
 
 1. `APKEDITOR_JAR` environment variable (points to the `.jar` or its parent directory)
-2. `~/.batuta/config.json` → `apkeditor_path`
+2. `~/.mtk/config.json` → `apkeditor_path` (falls back to `~/.batuta/config.json` if present)
 3. Executable wrapper called `APKEditor` somewhere on `PATH`
 
 Examples:
@@ -52,7 +63,7 @@ Examples:
 # 1. Environment variable (temporary for current shell)
 export APKEDITOR_JAR="$HOME/tools/APKEditor/APKEditor.jar"
 
-# 2. Config file (~/.batuta/config.json)
+# 2. Config file (~/.mtk/config.json)
 {
   "apkeditor_path": "~/tools/APKEditor/APKEditor.jar"
 }
@@ -63,7 +74,7 @@ exec java -jar "$HOME/tools/APKEditor/APKEditor.jar" "$@"
 ```
 
 You can point `apkeditor_path` to either the JAR file itself or the directory
-containing `APKEditor.jar`. Batuta keeps the pulled split directory intact after
+containing `APKEditor.jar`. `mtk` keeps the pulled split directory intact after
 merging, regardless of the resolution method you use.
 
 ---
@@ -73,8 +84,8 @@ merging, regardless of the resolution method you use.
 Install from source with uv:
 
 ```bash
-git clone https://github.com/luca-regne/batuta
-cd batuta
+git clone https://github.com/luca-regne/mtk
+cd mtk
 uv sync
 ```
 
@@ -90,46 +101,49 @@ pip install -e .
 
 ```bash
 # List connected devices
-batuta device list
+mtk device list
 
 # Search for packages by name
-batuta apk search google
+mtk apk search google
 
 # Get detailed info about a package
-batuta apk info com.example.app
+mtk apk info com.example.app
 
 # Pull an APK (supports partial names and filters)
-batuta apk pull youtube
-
-# Pull with interactive selection when multiple matches (prompted automatically)
+mtk apk pull youtube
 
 # Pull to a specific directory
-batuta apk pull com.example.app --output ./apks/
+mtk apk pull com.example.app --output ./apks/
 
 # Pull and immediately decompile
-batuta apk pull com.example.app --decompile
+mtk apk pull com.example.app --decompile
 
 # Standalone decompile from local APK
-batuta apk decompile ./apks/com.example.app.apk --java-only
+mtk apk decompile ./apks/com.example.app.apk --java-only
 
 # Merge a split APK directory (keeps original files)
-batuta apk merge ./apks/com.example.app --output ./apks/com.example.app.merged.apk
+mtk apk merge ./apks/com.example.app --output ./apks/com.example.app.merged.apk
 
 # Detect cross-platform frameworks
-batuta analyze framework ./apks/com.example.app.apk
+mtk analyze framework ./apks/com.example.app.apk
 
 # Framework detection with JSON output
-batuta analyze framework ./apks/com.example.app.apk --json
+mtk analyze framework ./apks/com.example.app.apk --json
 ```
+
+> The command layout is evolving as iOS support lands — see [Roadmap](#roadmap--planned).
 
 ---
 
 ## Command Reference
 
+> These are today's commands (Android only). iOS commands and a revised top-level layout are planned.
+
 ```
-batuta
+mtk
 ├── analyze
-│   └── framework <apk>            Detect cross-platform frameworks in APK
+│   ├── framework <apk>            Detect cross-platform frameworks in APK
+│   └── manifest <apk>             Parse AndroidManifest.xml (components, permissions, attack surface)
 │
 ├── device
 │   ├── list                       List connected ADB devices
@@ -155,26 +169,36 @@ batuta
 | `--decompile`    | (pull) Decompile after pulling (Java + smali)      |
 | `--auto-merge`   | (pull) Merge split APK folders via APKEditor       |
 | `--java-only`    | (pull/decompile) Limit to Java (`jadx`) output     |
-| `--smali-only`   | (pull/decompile) Limit to smali/resources (`apktool`)
+| `--smali-only`   | (pull/decompile) Limit to smali/resources (`apktool`) |
 
 Split APK pulls always save the original directory of base/split parts.
 Use `--auto-merge` for immediate merging (the folder stays untouched) or
-run `batuta apk merge <dir>` later. When `--decompile` is supplied, splits
+run `mtk apk merge <dir>` later. When `--decompile` is supplied, splits
 are merged automatically so jadx/apktool can run without extra steps.
 
 ### Examples
 
 ```bash
 # JSON output for scripting
-batuta device list --json | jq '.[0].id'
-batuta apk search facebook --json | jq '.[].package_name'
+mtk device list --json | jq '.[0].id'
+mtk apk search facebook --json | jq '.[].package_name'
 
 # Target specific device
-batuta apk pull com.example.app --device RX8WC00D7JE
+mtk apk pull com.example.app --device RX8WC00D7JE
 
 # Include system packages
-batuta apk list --system --filter android
+mtk apk list --system --filter android
 ```
+
+---
+
+## Roadmap / Planned
+
+These capabilities are **not yet implemented**. They define the direction of `mtk` as a multi-platform mobile toolkit — issues and PRs welcome.
+
+- **iOS / IPA analysis** — `Info.plist` parsing, entitlements inspection, framework detection, and IPA repack/resign workflows.
+- **Expanded device management** — iOS device support, app install/uninstall, and on-device file transfer across both platforms.
+- **Unified cross-platform surface** — a top-level command layout that treats Android and iOS as first-class peers.
 
 ---
 
@@ -183,7 +207,7 @@ batuta apk list --system --filter android
 The core logic is importable independently of the CLI:
 
 ```python
-from batuta.core.adb import ADBWrapper
+from mtk.core.adb import ADBWrapper
 
 # List devices
 adb = ADBWrapper()
@@ -206,7 +230,7 @@ print(f"Pulled to: {result.local_path}")
 ## Architecture
 
 ```
-src/batuta/
+src/mtk/
 ├── cli/          # Typer commands — argument parsing and rich output only
 ├── core/         # Business logic — importable as a library
 ├── models/       # Pydantic v2 data models
@@ -229,16 +253,16 @@ Key architectural constraints:
 uv sync --group dev
 
 # Lint
-ruff check src/batuta/
+ruff check src/mtk/
 
 # Auto-fix lint issues
-ruff check src/batuta/ --fix
+ruff check src/mtk/ --fix
 
 # Type check
-mypy src/batuta/
+mypy src/mtk/
 
 # Run the CLI
-uv run batuta --help
+uv run mtk --help
 ```
 
 ---
@@ -276,11 +300,13 @@ GitHub Actions will then:
 3. Publish to PyPI
 4. Create GitHub Release with artifacts
 
-### For Contributors
+---
 
-All commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format.
+## Contributing
 
-See [COMMIT_CONVENTION.md](.github/COMMIT_CONVENTION.md) for details.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and workflow, and [COMMIT_CONVENTION.md](.github/COMMIT_CONVENTION.md) for the commit format.
+
+All commits must follow [Conventional Commits](https://www.conventionalcommits.org/).
 
 **Setup pre-commit hooks:**
 
@@ -298,5 +324,3 @@ brew install git-cliff
 # Linux
 cargo install git-cliff
 ```
-
----

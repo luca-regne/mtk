@@ -3,18 +3,18 @@
 import tempfile
 from pathlib import Path
 
-from batuta.exceptions import APKAlignError, APKBuildError, APKSignError
-from batuta.models.apk import PatchResult
-from batuta.utils.android_sdk import get_apksigner, get_zipalign
-from batuta.utils.deps import require
-from batuta.utils.process import run_tool
+from mtk.exceptions import APKAlignError, APKBuildError, APKSignError
+from mtk.models.apk import PatchResult
+from mtk.utils.android_sdk import get_apksigner, get_zipalign
+from mtk.utils.deps import require
+from mtk.utils.process import run_tool
 
 
 class APKPatcher:
     """Handles APK building, aligning, and signing from apktool directories."""
 
     # Default keystore location
-    DEFAULT_KEYSTORE_DIR = Path.home() / ".batuta"
+    DEFAULT_KEYSTORE_DIR = Path.home() / ".mtk"
     DEFAULT_KEYSTORE_NAME = "debug.keystore"
     DEFAULT_KEY_ALIAS = "androiddebugkey"
     DEFAULT_STORE_PASS = "android"

@@ -23,10 +23,10 @@ jobs:
         run: uv sync --group dev
 
       - name: Lint with ruff
-        run: uv run ruff check src/batuta/
+        run: uv run ruff check src/mtk/
 
       - name: Type check with mypy
-        run: uv run mypy src/batuta/
+        run: uv run mypy src/mtk/
 
       - name: Build package
         run: uv build
@@ -36,7 +36,7 @@ jobs:
           uv venv .test-venv
           source .test-venv/bin/activate
           uv pip install dist/*.whl
-          batuta --help
+          mtk --help
           deactivate
 
       - name: Upload build artifacts

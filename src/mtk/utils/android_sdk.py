@@ -4,7 +4,7 @@ import os
 import platform
 from pathlib import Path
 
-from batuta.exceptions import ToolNotFoundError
+from mtk.exceptions import ToolNotFoundError
 
 
 def get_android_home() -> Path | None:

@@ -7,19 +7,19 @@ from pathlib import Path
 import typer
 from rich.table import Table
 
-from batuta.core.adb import ADBWrapper
-from batuta.core.analyzer import FrameworkDetector
-from batuta.core.decompiler import APKDecompiler
-from batuta.core.merger import SplitAPKMerger
-from batuta.exceptions import (
+from mtk.core.adb import ADBWrapper
+from mtk.core.analyzer import FrameworkDetector
+from mtk.core.decompiler import APKDecompiler
+from mtk.core.merger import SplitAPKMerger
+from mtk.exceptions import (
     APKPermissionError,
-    BatutaError,
+    MTKError,
     MultiplePackagesFoundError,
     PackageNotFoundError,
 )
-from batuta.models.apk import DecompileResult, PackageInfo
-from batuta.utils.deps import require
-from batuta.utils.output import console
+from mtk.models.apk import DecompileResult, PackageInfo
+from mtk.utils.deps import require
+from mtk.utils.output import console
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -212,7 +212,7 @@ def list_packages(
 
         console.print(table)
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -285,7 +285,7 @@ def package_info(
 
         console.print()
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -424,7 +424,7 @@ def pull_apk(
                         console.print(f"    - {p.name}")
                     if not (auto_merge or decompile):
                         console.print_info(
-                            f"  Merge later with: batuta apk merge {result.local_path}"
+                            f"  Merge later with: mtk apk merge {result.local_path}"
                         )
 
             # Quick framework scan across all pulled APK parts (ZIP listing only)
@@ -437,7 +437,7 @@ def pull_apk(
                 if fw_result.detected_frameworks and not json_output:
                     names = ", ".join(m.name for m in fw_result.detected_frameworks)
                     console.print_info(f"  Framework: {names}")
-            except BatutaError:
+            except MTKError:
                 pass  # Non-fatal — pull already succeeded
             fw_results.append(fw_result)
 
@@ -460,7 +460,7 @@ def pull_apk(
                     result.merged_path = merged_path
                     if not json_output:
                         console.print_success(f"  Merged APK: {merged_path}")
-                except BatutaError as merge_error:
+                except MTKError as merge_error:
                     result.merged_path = None
                     if not json_output:
                         console.print_error(f"  Merge failed: {merge_error}")
@@ -543,7 +543,7 @@ def pull_apk(
             typer.echo(json.dumps(payload, indent=2))
             return
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -552,7 +552,7 @@ def pull_apk(
 def merge_split_apks(
     split_dir: Path = typer.Argument(
         ...,
-        help="Directory that contains base.apk + splits (output of batuta apk pull).",
+        help="Directory that contains base.apk + splits (output of mtk apk pull).",
         exists=True,
         file_okay=False,
         dir_okay=True,
@@ -595,7 +595,7 @@ def merge_split_apks(
         console.print_success(f"Merged APK created: {merged_path}")
         console.print_info("Original split APKs remain untouched in the source folder")
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -670,7 +670,7 @@ def search_packages(
 
         console.print(table)
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -754,21 +754,21 @@ def patch_apk(
     Examples:
 
         # Basic usage with auto-generated debug keystore
-        batuta apk patch ./com.example.app/
+        mtk apk patch ./com.example.app/
 
         # Custom output path
-        batuta apk patch ./com.example.app/ -o ./patched.apk
+        mtk apk patch ./com.example.app/ -o ./patched.apk
 
         # Use custom keystore
-        batuta apk patch ./com.example.app/ -k release.keystore --key-alias mykey
+        mtk apk patch ./com.example.app/ -k release.keystore --key-alias mykey
 
         # Build only (no signing)
-        batuta apk patch ./com.example.app/ --no-sign --no-align
+        mtk apk patch ./com.example.app/ --no-sign --no-align
 
         # Patch, verify, and install
-        batuta apk patch ./com.example.app/ --verify --install
+        mtk apk patch ./com.example.app/ --verify --install
     """
-    from batuta.core.patcher import APKPatcher
+    from mtk.core.patcher import APKPatcher
 
     require("apktool")
     console.set_json_mode(json_output)
@@ -818,7 +818,7 @@ def patch_apk(
 
             with console.status("Installing...") if not json_output else nullcontext():
                 # Use -r to replace existing app
-                from batuta.utils.process import run_tool
+                from mtk.utils.process import run_tool
 
                 cmd = ["adb"]
                 if device:
@@ -841,7 +841,7 @@ def patch_apk(
             }
             typer.echo(json.dumps(output_data, indent=2))
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None
 
@@ -892,16 +892,16 @@ def decompile_apk(
     Examples:
 
         # Full decompile (Java + smali)
-        batuta apk decompile app.apk
+        mtk apk decompile app.apk
 
         # Java source only
-        batuta apk decompile app.apk --java-only
+        mtk apk decompile app.apk --java-only
 
         # Smali/resources only
-        batuta apk decompile app.apk --smali-only
+        mtk apk decompile app.apk --smali-only
 
         # Custom output directory
-        batuta apk decompile app.apk -o ./analysis/
+        mtk apk decompile app.apk -o ./analysis/
     """
     console.set_json_mode(json_output)
 
@@ -961,6 +961,6 @@ def decompile_apk(
         elif do_smali and not result.smali_success:
             console.print_warning("  Smali decompilation failed")
 
-    except BatutaError as e:
+    except MTKError as e:
         console.print_error(str(e))
         raise typer.Exit(1) from None

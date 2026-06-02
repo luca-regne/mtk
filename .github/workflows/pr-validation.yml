@@ -41,6 +41,6 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev
       - name: Lint with ruff
-        run: uv run ruff check src/batuta/
+        run: uv run ruff check src/mtk/
       - name: Type check with mypy
-        run: uv run mypy src/batuta/
+        run: uv run mypy src/mtk/

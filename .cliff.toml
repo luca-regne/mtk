@@ -30,10 +30,10 @@ footer = """
     {% if release.version %}\
         {% if release.previous.version %}\
             [{{ release.version | trim_start_matches(pat="v") }}]: \
-                https://github.com/luca-regne/batuta/compare/{{ release.previous.version }}..{{ release.version }}
+                https://github.com/luca-regne/mtk/compare/{{ release.previous.version }}..{{ release.version }}
         {% endif %}\
     {% else %}\
-        [unreleased]: https://github.com/luca-regne/batuta/compare/{{ release.previous.version }}..HEAD
+        [unreleased]: https://github.com/luca-regne/mtk/compare/{{ release.previous.version }}..HEAD
     {% endif %}\
 {% endfor %}
 """

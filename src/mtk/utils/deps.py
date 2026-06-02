@@ -7,8 +7,8 @@ import shutil
 from pathlib import Path
 from typing import Final
 
-from batuta.exceptions import ToolNotFoundError
-from batuta.utils.config import get_config_value
+from mtk.exceptions import ToolNotFoundError
+from mtk.utils.config import get_config_value
 
 # Install hints for required tools
 TOOL_INSTALL_HINTS: dict[str, str] = {
@@ -17,7 +17,7 @@ TOOL_INSTALL_HINTS: dict[str, str] = {
     "jadx": "https://github.com/skylot/jadx",
     "APKEditor": (
         "https://github.com/REAndroid/APKEditor — set APKEDITOR_JAR, "
-        "configure ~/.batuta/config.json, or add wrapper script to PATH"
+        "configure ~/.mtk/config.json, or add wrapper script to PATH"
     ),
     "zipalign": "Part of Android SDK build-tools (set ANDROID_HOME)",
     "apksigner": "Part of Android SDK build-tools (set ANDROID_HOME)",

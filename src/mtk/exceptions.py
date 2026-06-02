@@ -1,13 +1,13 @@
-"""Typed exception hierarchy for batuta."""
+"""Typed exception hierarchy for mtk."""
 
 
-class BatutaError(Exception):
-    """Base exception for all batuta errors."""
+class MTKError(Exception):
+    """Base exception for all mtk errors."""
 
     pass
 
 
-class ToolNotFoundError(BatutaError):
+class ToolNotFoundError(MTKError):
     """Raised when a required external tool is not installed."""
 
     def __init__(self, tool: str, install_hint: str | None = None):
@@ -19,7 +19,7 @@ class ToolNotFoundError(BatutaError):
         super().__init__(message)
 
 
-class ADBError(BatutaError):
+class ADBError(MTKError):
     """Raised when an ADB command fails."""
 
     pass
@@ -73,13 +73,13 @@ class APKPermissionError(APKPullError):
         )
 
 
-class APKMergeError(BatutaError):
+class APKMergeError(MTKError):
     """Raised when merging split APKs fails."""
 
     pass
 
 
-class ProcessError(BatutaError):
+class ProcessError(MTKError):
     """Raised when a subprocess command fails."""
 
     def __init__(self, command: list[str], returncode: int, stderr: str):
@@ -90,37 +90,37 @@ class ProcessError(BatutaError):
         super().__init__(f"Command failed (exit {returncode}): {cmd_str}\n{stderr}")
 
 
-class APKBuildError(BatutaError):
+class APKBuildError(MTKError):
     """Raised when APK building with apktool fails."""
 
     pass
 
 
-class APKAlignError(BatutaError):
+class APKAlignError(MTKError):
     """Raised when APK alignment with zipalign fails."""
 
     pass
 
 
-class APKSignError(BatutaError):
+class APKSignError(MTKError):
     """Raised when APK signing fails."""
 
     pass
 
 
-class DecompileError(BatutaError):
+class DecompileError(MTKError):
     """Raised when APK decompilation fails."""
 
     pass
 
 
-class AnalysisError(BatutaError):
+class AnalysisError(MTKError):
     """Raised when APK analysis fails."""
 
     pass
 
 
-class ManifestParseError(BatutaError):
+class ManifestParseError(MTKError):
     """Raised when AndroidManifest.xml cannot be parsed."""
 
     pass
